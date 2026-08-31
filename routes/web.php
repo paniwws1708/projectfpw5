@@ -45,3 +45,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::post('/mahasiswa', function () {
     return 'Data mahasiswa berhasil ditambahkan';
 });
+Route::post('/mhs', function () {
+    return 'Data  berhasil ditambahkan';
+});
