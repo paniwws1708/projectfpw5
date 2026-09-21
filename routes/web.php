@@ -52,3 +52,7 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
 });
+
+Route::get('/pos/history', function () {
+    return 'Riwayat Transaksi';
+})->middleware(['auth', 'role:kasir'])->name('pos.history');

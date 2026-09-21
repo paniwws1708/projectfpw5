@@ -1,16 +1,16 @@
 <div>
-   @props(['status'])
+   @props(['type' => 'aman'])
 
 @php
-    $warna = match($status) {
-        'Aman' => 'bg-green-100 text-green-700',
-        'Menipis' => 'bg-yellow-100 text-yellow-700',
-        'Habis' => 'bg-red-100 text-red-700',
-        default => 'bg-gray-100 text-gray-700',
+    $classes = match($type) {
+        'aman' => 'bg-green-100 text-green-800 border-green-200',
+        'menipis' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
+        'habis' => 'bg-red-100 text-red-800 border-red-200',
+        default => 'bg-gray-100 text-gray-800 border-gray-200',
     };
 @endphp
 
-<span class="px-3 py-1 rounded-full text-sm font-medium {{ $warna }}">
-    {{ $status }}
+<span {{ $attributes->merge(['class' => 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ' . $classes]) }}>
+    {{ $slot }}
 </span>
 </div>
