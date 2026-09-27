@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreCategoryRequest; // <--- 1. Import StoreCategoryRequest di sini
 
 class CategoryController extends Controller
 {
@@ -27,14 +27,9 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request) // <--- 2. Ubah Request jadi StoreCategoryRequest
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100|unique:categories,name',
-            'description' => 'nullable|string|max:255',
-        ]);
-
-        Category::create($validated);
+        Category::create($request->validated()); // <--- Gunakan $request->validated()
 
         return redirect()->route('categories.index')->with('success', 'kategori berhasil ditambahkan.');
     }
@@ -58,7 +53,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(StoreCategoryRequest $request, Category $category)
     {
         //
     }
