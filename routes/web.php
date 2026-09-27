@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PurchaseController;
 use Illuminate\Support\Facades\Route;
 
 // UBAH BAGIAN INI (Mengalihkan / ke /login):
@@ -58,3 +59,4 @@ Route::get('/pos/history', function () {
 })->middleware(['auth', 'role:kasir'])->name('pos.history');
 
 Route::resource('categories', CategoryController::class);
+Route::resource('purchases', PurchaseController::class);
