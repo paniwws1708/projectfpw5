@@ -3,10 +3,11 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Category; 
 
 class CategorySeeder extends Seeder
 {
-   public function run(): void
+    public function run(): void
     {
         $categories = ['Sembako', 'Minuman', 'Makanan Ringan', 'Kebutuhan Rumah Tangga'];
         foreach ($categories as $name) {
