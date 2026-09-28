@@ -44,4 +44,9 @@ class PurchaseController extends Controller
 
         return redirect()->route('purchases.create')->with('success', 'Pembelian berhasil dicatat & stok produk otomatis bertambah!');
     }
+    public function index()
+    {
+        // Ganti 'purchases.index' sesuai dengan nama folder/file view kamu
+        return view('master-data.purchase.index');
+    }
 }

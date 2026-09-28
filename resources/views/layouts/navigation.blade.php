@@ -20,6 +20,10 @@
                        class="{{ request()->routeIs('report.sales') ? 'text-indigo-600' : 'text-gray-500' }}">
                         Laporan
                     </a>
+                    <a href="{{ route('purchases.index') }}"
+                       class="{{ request()->routeIs('purchases.*') ? 'text-indigo-600' : 'text-gray-500' }}">
+                         Pembelian
+                     </a>
                 @endif
 
                 @if (auth()->user()->role === 'kasir')

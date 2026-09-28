@@ -12,7 +12,9 @@ class Product extends Model
 
     protected $fillable = [
         'category_id',
+        'code',
         'name',
+        'unit',
         'price',
         'stock',
     ];
@@ -26,5 +28,9 @@ class Product extends Model
         return Attribute::make(
             get: fn () => 'Rp ' . number_format($this->price, 0, ',', '.')
         );
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }
