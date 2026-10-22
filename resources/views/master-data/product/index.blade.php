@@ -1,8 +1,13 @@
+
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800">Daftar Produk</h2>
-            <a href="{{ route('products.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+            <h2 class="font-semibold text-xl text-gray-800">
+                Data Produk
+            </h2>
+
+            <a href="{{ route('products.create') }}"
+               class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700">
                 + Tambah Produk
             </a>
         </div>
@@ -10,43 +15,180 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            {{-- Pesan sukses --}}
             @if (session('success'))
-                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                <div class="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm">
                     {{ session('success') }}
                 </div>
             @endif
 
             <x-card>
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kode</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Produk</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harga</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stok</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse ($products as $product)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $product->code }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $product->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $product->category->name ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $product->stock }} {{ $product->unit }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">Belum ada data produk.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
 
+                {{-- Form pencarian dan filter kategori --}}
+                <form method="GET"
+                      action="{{ route('products.index') }}"
+                      class="flex flex-col sm:flex-row gap-3 mb-4">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Cari nama atau kode produk..."
+                        class="flex-1 rounded-md border-gray-300 shadow-sm"
+                    >
+
+                    <select name="category_id"
+                            class="rounded-md border-gray-300 shadow-sm">
+
+                        <option value="">Semua Kategori</option>
+
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}"
+                                @selected(request('category_id') == $category->id)>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+
+                    </select>
+
+                    <button type="submit"
+                            class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                        Cari
+                    </button>
+
+                    <a href="{{ route('products.index') }}"
+                       class="px-4 py-2 text-gray-500 bg-gray-100 rounded-md text-center hover:bg-gray-200">
+                        Reset
+                    </a>
+                </form>
+
+                {{-- Tabel produk --}}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                                    Kode
+                                </th>
+
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                                    Nama Produk
+                                </th>
+
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                                    Kategori
+                                </th>
+
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">
+                                    Harga
+                                </th>
+
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">
+                                    Stok
+                                </th>
+
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">
+                                    Aksi
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-gray-100">
+
+                            @forelse ($products as $product)
+                                <tr class="@if ($product->stock == 0) bg-red-50 @elseif ($product->stock < 10) bg-yellow-50 @endif">
+
+                                    {{-- Kode produk --}}
+                                    <td class="px-4 py-2 text-sm">
+                                        {{ $product->code }}
+                                    </td>
+
+                                    {{-- Nama produk --}}
+                                    <td class="px-4 py-2 text-sm">
+                                        {{ $product->name }}
+                                    </td>
+
+                                    {{-- Kategori --}}
+                                    <td class="px-4 py-2 text-sm">
+                                        {{ $product->category->name ?? '-' }}
+                                    </td>
+
+                                    {{-- Harga --}}
+                                    <td class="px-4 py-2 text-sm text-right">
+                                        Rp{{ number_format($product->price, 0, ',', '.') }}
+                                    </td>
+
+                                    {{-- Stok --}}
+                                    <td class="px-4 py-2 text-sm text-center font-semibold">
+                                        {{ $product->stock }}
+
+                                        @if ($product->stock == 0)
+                                            <span class="text-red-600 text-xs block font-normal">
+                                                Habis
+                                            </span>
+                                        @elseif ($product->stock < 10)
+                                            <span class="text-yellow-600 text-xs block font-normal">
+                                                Menipis
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    {{-- Aksi --}}
+                                    <td class="px-4 py-2 text-sm text-center">
+                                        <div class="flex items-center justify-center gap-3">
+
+                                            {{-- Tombol ubah --}}
+                                            <a href="{{ route('products.edit', $product) }}"
+                                               class="text-indigo-600 hover:text-indigo-800">
+                                                Ubah
+                                            </a>
+
+                                            {{-- Tombol hapus --}}
+                                            <form
+                                                action="{{ route('products.destroy', $product) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Yakin ingin menghapus produk {{ $product->name }}?')"
+                                                class="inline">
+
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit"
+                                                        class="text-red-600 hover:text-red-800">
+                                                    Hapus
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6"
+                                        class="px-4 py-6 text-center text-gray-500">
+
+                                        @if (request('search') || request('category_id'))
+                                            Produk tidak ditemukan dengan kriteria tersebut.
+                                        @else
+                                            Belum ada data produk.
+                                        @endif
+
+                                    </td>
+                                </tr>
+                            @endforelse
+
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Pagination --}}
                 <div class="mt-4">
                     {{ $products->links() }}
                 </div>
+
             </x-card>
         </div>
     </div>
