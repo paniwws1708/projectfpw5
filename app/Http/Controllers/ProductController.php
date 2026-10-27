@@ -13,30 +13,27 @@ class ProductController extends Controller
     /**
      * Menampilkan daftar produk
      */
-    
-public function index(Request $request)
-{
-    $query = Product::with('category');
- 
-    if ($request->filled('search')) {
-        $keyword = $request->search;
-        $query->where(function ($q) use ($keyword) {
-            $q->where('name', 'like', "%{$keyword}%")
-              ->orWhere('code', 'like', "%{$keyword}%");
-        });
-    }
- 
-    if ($request->filled('category_id')) {
-        $query->where('category_id', $request->category_id);
-    }
- 
-    $products = $query->latest()->paginate(10)->withQueryString();
-    $categories = Category::orderBy('name')->get();
- 
-    return view('master-data.product.index', compact('products', 'categories'));
-}
+    public function index(Request $request)
+    {
+        $query = Product::with('category');
 
+        if ($request->filled('search')) {
+            $keyword = $request->search;
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")
+                  ->orWhere('code', 'like', "%{$keyword}%");
+            });
+        }
 
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        $products = $query->latest()->paginate(10)->withQueryString();
+        $categories = Category::orderBy('name')->get();
+
+        return view('master-data.product.index', compact('products', 'categories'));
+    }
 
     public function create()
     {
@@ -50,25 +47,32 @@ public function index(Request $request)
         return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
+    /**
+     * Menangani rute detail produk (/products/{id})
+     */
+    public function show(Product $product)
+    {
+        // Dialihkan ke halaman edit karena view detail produk belum dibuat
+        return redirect()->route('products.edit', $product);
+    }
+
     public function edit(Product $product)
-{
-    $categories = Category::orderBy('name')->get();
-    return view('master-data.product.edit', compact('product', 'categories'));
-}
+    {
+        $categories = Category::orderBy('name')->get();
+        return view('master-data.product.edit', compact('product', 'categories'));
+    }
 
-public function update(UpdateProductRequest $request, Product $product)
-{
-    $product->update($request->validated());
- 
-    return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
-}
+    public function update(UpdateProductRequest $request, Product $product)
+    {
+        $product->update($request->validated());
 
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+    }
 
-public function destroy(Product $product)
-{
-    $product->delete();
- 
-    return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
-}
+    public function destroy(Product $product)
+    {
+        $product->delete();
 
+        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+    }
 }

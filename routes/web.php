@@ -9,31 +9,29 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PurchaseController;
 use Illuminate\Support\Facades\Route;
 
-// UBAH BAGIAN INI (Mengalihkan / ke /login):
+// Redirect halaman utama ke login
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
 // Rute Guest & Auth
-Route::get('/login', [LoginController::class, 'create'])
-    ->middleware('guest')
-    ->name('login');
+Route::get('/login', [LoginController::class, 'create'])->middleware('guest')->name('login');
+Route::post('/login', [LoginController::class, 'store'])->middleware('guest')->name('login.store');
+Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 
-Route::post('/login', [LoginController::class, 'store'])
-    ->middleware('guest')
-    ->name('login.store');
+// Rute Dashboard (Semua Pengguna Terautentikasi)
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
 
-Route::post('/logout', [LoginController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('logout');
-
-// Rute khusus Admin
+// Rute Khusus Admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('categories', CategoryController::class);
-    Route::resource('products', ProductController::class);
+    Route::resource('products', ProductController::class)->except(['show']); // Mencegah error 403 pada /products/10
+    Route::resource('purchases', PurchaseController::class);
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('report.sales');
-    
-    // [Latihan 1] Rute /users khusus admin
     Route::get('/users', [UserController::class, 'index'])->name('users');
 });
 
@@ -43,20 +41,7 @@ Route::middleware(['auth', 'role:admin,kasir'])->group(function () {
     Route::post('/pos', [PosController::class, 'store'])->name('pos.store');
 });
 
-Route::get('/dashboard', function () {
-    return 'Have a nice day';
-})->middleware('auth')->name('dashboard');
-
-// Rute untuk halaman dashboard (hanya untuk pengguna yang sudah login)
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
-
+// Rute Khusus Kasir
 Route::get('/pos/history', function () {
     return 'Riwayat Transaksi';
 })->middleware(['auth', 'role:kasir'])->name('pos.history');
-
-Route::resource('categories', CategoryController::class);
-Route::resource('purchases', PurchaseController::class);

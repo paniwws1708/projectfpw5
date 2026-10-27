@@ -1,4 +1,3 @@
-
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
@@ -69,29 +68,12 @@
 
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
-                                    Kode
-                                </th>
-
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
-                                    Nama Produk
-                                </th>
-
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
-                                    Kategori
-                                </th>
-
-                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">
-                                    Harga
-                                </th>
-
-                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">
-                                    Stok
-                                </th>
-
-                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">
-                                    Aksi
-                                </th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Kode</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Nama Produk</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Kategori</th>
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Harga</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Stok</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Aksi</th>
                             </tr>
                         </thead>
 
@@ -100,82 +82,48 @@
                             @forelse ($products as $product)
                                 <tr class="@if ($product->stock == 0) bg-red-50 @elseif ($product->stock < 10) bg-yellow-50 @endif">
 
-                                    {{-- Kode produk --}}
-                                    <td class="px-4 py-2 text-sm">
-                                        {{ $product->code }}
-                                    </td>
-
-                                    {{-- Nama produk --}}
-                                    <td class="px-4 py-2 text-sm">
-                                        {{ $product->name }}
-                                    </td>
-
-                                    {{-- Kategori --}}
-                                    <td class="px-4 py-2 text-sm">
-                                        {{ $product->category->name ?? '-' }}
-                                    </td>
-
-                                    {{-- Harga --}}
-                                    <td class="px-4 py-2 text-sm text-right">
-                                        Rp{{ number_format($product->price, 0, ',', '.') }}
-                                    </td>
-
-                                    {{-- Stok --}}
+                                    <td class="px-4 py-2 text-sm">{{ $product->code }}</td>
+                                    <td class="px-4 py-2 text-sm font-medium">{{ $product->name }}</td>
+                                    <td class="px-4 py-2 text-sm">{{ $product->category->name ?? '-' }}</td>
+                                    <td class="px-4 py-2 text-sm text-right">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
                                     <td class="px-4 py-2 text-sm text-center font-semibold">
                                         {{ $product->stock }}
-
                                         @if ($product->stock == 0)
-                                            <span class="text-red-600 text-xs block font-normal">
-                                                Habis
-                                            </span>
+                                            <span class="text-red-600 text-xs block font-normal">Habis</span>
                                         @elseif ($product->stock < 10)
-                                            <span class="text-yellow-600 text-xs block font-normal">
-                                                Menipis
-                                            </span>
+                                            <span class="text-yellow-600 text-xs block font-normal">Menipis</span>
                                         @endif
                                     </td>
 
-                                    {{-- Aksi --}}
                                     <td class="px-4 py-2 text-sm text-center">
                                         <div class="flex items-center justify-center gap-3">
-
-                                            {{-- Tombol ubah --}}
                                             <a href="{{ route('products.edit', $product) }}"
                                                class="text-indigo-600 hover:text-indigo-800">
                                                 Ubah
                                             </a>
 
-                                            {{-- Tombol hapus --}}
-                                            <form
-                                                action="{{ route('products.destroy', $product) }}"
-                                                method="POST"
-                                                onsubmit="return confirm('Yakin ingin menghapus produk {{ $product->name }}?')"
-                                                class="inline">
-
+                                            <form action="{{ route('products.destroy', $product) }}"
+                                                  method="POST"
+                                                  onsubmit="return confirm('Yakin ingin menghapus produk {{ $product->name }}?')"
+                                                  class="inline">
                                                 @csrf
                                                 @method('DELETE')
-
-                                                <button type="submit"
-                                                        class="text-red-600 hover:text-red-800">
+                                                <button type="submit" class="text-red-600 hover:text-red-800">
                                                     Hapus
                                                 </button>
                                             </form>
-
                                         </div>
                                     </td>
 
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6"
-                                        class="px-4 py-6 text-center text-gray-500">
-
+                                    <td colspan="6" class="px-4 py-6 text-center text-gray-500">
                                         @if (request('search') || request('category_id'))
                                             Produk tidak ditemukan dengan kriteria tersebut.
                                         @else
                                             Belum ada data produk.
                                         @endif
-
                                     </td>
                                 </tr>
                             @endforelse

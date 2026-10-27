@@ -8,16 +8,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
-    /**
-     * Handle an incoming request.
-     */
-    public function handle(Request $request, Closure $next, string ...$roles): Response
-{
-    if (! $request->user() || ! in_array($request->user()->role, $roles)) {
-        
-        return response()->view('errors.403', [], 403);
-    }
+    public function handle(
+        Request $request,
+        Closure $next,
+        string ...$roles
+    ): Response {
+        if (!$request->user()) {
+            return redirect()->route('login');
+        }
 
-    return $next($request);
-}
+        $userRole = strtolower(trim((string) $request->user()->role));
+        $allowedRoles = array_map('strtolower', $roles);
+
+        if (!in_array($userRole, $allowedRoles, true)) {
+            abort(403, 'Akses ditolak');
+        }
+
+        return $next($request);
+    }
 }

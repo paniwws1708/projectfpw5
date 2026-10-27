@@ -7,15 +7,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <x-card>
                 <h3 class="text-lg font-semibold mb-2">Ringkasan Hari Ini</h3>
-                <p class="text-gray-600">
-                    Selamat datang, {{ auth()->user()->name }}. Anda login sebagai <strong>{{ strtoupper(auth()->user()->role) }}</strong>.
-                </p>
-
-                {{-- Tag <hr> ini yang membuat garis pemisah lebih makin jelas --}}
-                <hr class="my-4 border-t border-gray-300">
-
-                <div class="flex items-center space-x-3 text-sm text-gray-600">
-                    <span>Contoh Status Stok:</span>
+                <p class="text-gray-600 mb-4">Selamat datang, {{ auth()->user()->name }}. Anda login sebagai <strong class="uppercase">{{ auth()->user()->role }}</strong>.</p>
+                
+                <!-- Contoh Pengujian Komponen Badge -->
+                <div class="pt-4 border-t flex space-x-3 items-center">
+                    <span class="text-sm text-gray-500 font-medium">Contoh Status Stok:</span>
                     <x-badge type="aman">Stok Aman</x-badge>
                     <x-badge type="menipis">Stok Menipis</x-badge>
                     <x-badge type="habis">Stok Habis</x-badge>
