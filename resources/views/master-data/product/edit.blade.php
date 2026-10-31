@@ -6,133 +6,78 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <x-card>
-                <form action="{{ route('products.update', $product) }}"
-                      method="POST"
-                      class="space-y-4">
+                
+                @if ($errors->any())
+                    <div class="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">
+                        <ul class="list-disc pl-5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
+                <form action="{{ route('products.update', $product) }}" method="POST" class="space-y-5">
                     @csrf
                     @method('PUT')
 
                     {{-- Kategori --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
-                            Kategori
-                        </label>
-
-                        <select name="category_id"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-
+                        <label class="block text-sm font-medium text-gray-700">Kategori</label>
+                        <select name="category_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option value="">Pilih kategori</option>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}"
-                                    @selected(old('category_id', $product->category_id) == $category->id)>
+                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
                         </select>
-
-                        @error('category_id')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     {{-- Kode Produk --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
-                            Kode Produk
-                        </label>
-
-                        <input type="text"
-                               name="code"
-                               value="{{ old('code', $product->code) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-
-                        @error('code')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
+                        <label class="block text-sm font-medium text-gray-700">Kode Produk</label>
+                        <input type="text" name="code" value="{{ old('code', $product->code) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                     </div>
 
                     {{-- Nama Produk --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
-                            Nama Produk
-                        </label>
-
-                        <input type="text"
-                               name="name"
-                               value="{{ old('name', $product->name) }}"
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-
-                        @error('name')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
+                        <label class="block text-sm font-medium text-gray-700">Nama Produk</label>
+                        <input type="text" name="name" value="{{ old('name', $product->name) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                     </div>
 
-                    {{-- Satuan, Harga, dan Stok --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {{-- Satuan --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Satuan</label>
+                        <input type="text" name="unit" value="{{ old('unit', $product->unit) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        {{-- Harga --}}
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">
-                                Satuan
-                            </label>
-
-                            <input type="text"
-                                   name="unit"
-                                   value="{{ old('unit', $product->unit) }}"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-
-                            @error('unit')
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
+                            <label class="block text-sm font-medium text-gray-700">Harga</label>
+                            <input type="number" name="price" value="{{ old('price', $product->price) }}" min="0" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
 
+                        {{-- Stok --}}
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">
-                                Harga
-                            </label>
-
-                            <input type="number"
-                                   name="price"
-                                   value="{{ old('price', $product->price) }}"
-                                   min="0"
-                                   step="any"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-
-                            @error('price')
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">
-                                Stok
-                            </label>
-
-                            <input type="number"
-                                   name="stock"
-                                   value="{{ old('stock', $product->stock) }}"
-                                   min="0"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-
-                            @error('stock')
-                                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                            @enderror
+                            <label class="block text-sm font-medium text-gray-700">Stok</label>
+                            <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" min="0" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
                     </div>
 
-                    {{-- Tombol --}}
-                    <div class="flex items-center gap-3">
-                        <button type="submit"
-                                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-                            Simpan Perubahan
-                        </button>
-
-                        <a href="{{ route('products.index') }}"
-                           class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300">
+                    <div class="mt-6 flex items-center justify-end gap-3">
+                        <a href="{{ route('products.index') }}" class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
                             Batal
                         </a>
+                        <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
+                            Simpan Perubahan
+                        </button>
                     </div>
                 </form>
+
             </x-card>
         </div>
     </div>

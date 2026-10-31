@@ -50,11 +50,29 @@ class ProductController extends Controller
     /**
      * Menangani rute detail produk (/products/{id})
      */
-    public function show(Product $product)
-    {
-        // Dialihkan ke halaman edit karena view detail produk belum dibuat
-        return redirect()->route('products.edit', $product);
-    }
+    
+/**
+ * Menampilkan detail produk dan riwayat penjualan
+ */
+public function show(Product $product)
+{
+    $product->load(['transactionDetails.transaction']);
+
+    $totalTerjual = $product->transactionDetails->sum('qty');
+
+    $riwayat = $product->transactionDetails()
+        ->with('transaction')
+        ->latest()
+        ->take(10)
+        ->get();
+
+    return view('master-data.product.show', compact(
+        'product',
+        'totalTerjual',
+        'riwayat'
+    ));
+}
+
 
     public function edit(Product $product)
     {
