@@ -10,7 +10,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PurchaseController; 
-
+use App\Http\Controllers\DashboardController;
 
 // Halaman Guest (Belum Login)
 Route::middleware('guest')->group(function () {
@@ -19,8 +19,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('/', function() {
-    return view ('welcome');
+    return view('welcome');
 });
+
 // Logout (Harus Login)
 Route::post('/logout', [LoginController::class, 'destroy'])
     ->middleware('auth')
@@ -34,19 +35,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('purchases', PurchaseController::class); 
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('report.sales');
     Route::resource('users', UserController::class); 
+    Route::get('/reports/sales/export', [ReportController::class, 'export'])->name('report.export');
 });
 
 // Admin dan Kasir
-
 Route::middleware(['auth', 'role:admin,kasir'])->group(function () {
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
     Route::post('/pos', [PosController::class, 'store'])->name('pos.store');
     Route::get('/pos/{transaction}/struk', [PosController::class, 'struk'])->name('pos.struk');
 });
 
-// Dashboard 
+
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
